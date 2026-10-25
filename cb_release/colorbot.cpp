@@ -47,8 +47,8 @@ int ColorBot::GetRandomInt(int min, int max) {
 
 void ColorBot::RGBtoHSV(int r, int g, int b, float& h, float& s, float& v) {
     float rf = r / 255.0f, gf = g / 255.0f, bf = b / 255.0f;
-    float maxc = (std::max)({ rf, gf, bf });
-    float minc = (std::min)({ rf, gf, bf });
+    float maxc = rf > gf ? (rf > bf ? rf : bf) : (gf > bf ? gf : bf);
+    float minc = rf < gf ? (rf < bf ? rf : bf) : (gf < bf ? gf : bf);
     float delta = maxc - minc;
     v = maxc * 100.0f;
     if (maxc < 0.00001f) { s = 0.0f; h = 0.0f; return; }
@@ -139,7 +139,9 @@ bool ColorBot::ComputeHeadCentroid(const std::vector<PixelPos>& pixels,
               [](const PixelPos& a, const PixelPos& b){ return a.y < b.y; });
 
     // Take top head_pct% by count, minimum 1 pixel.
-    int take = std::max(1, static_cast<int>(sorted.size() * head_pct / 100));
+    int total = static_cast<int>(sorted.size());
+    int take  = total * head_pct / 100;
+    if (take < 1) take = 1;
 
     double sx = 0.0, sy = 0.0;
     for (int i = 0; i < take; ++i) {

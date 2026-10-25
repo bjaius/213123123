@@ -78,7 +78,7 @@ struct AimTarget {
 class ColorBot {
 public:
     ColorBot()  = default;
-    ~ColorBot() { Stop(); }
+    ~ColorBot();
 
     void Start();
     void Stop();
